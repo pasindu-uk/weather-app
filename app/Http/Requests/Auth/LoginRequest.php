@@ -58,24 +58,31 @@ class LoginRequest extends FormRequest
         if ($temperature == null) {
             $temperature = Temperature::create([
                 'timestamp' => now(),
-                'celsius_1' => $location1MetricResponse['current']['temp'],
-                'fahrenheit_1' => $location1ImperialResponse['current']['temp'],
-                'celsius_2' => $location2MetricResponse['current']['temp'],
-                'fahrenheit_2' => $location2ImperialResponse['current']['temp'],
+                'location' => 1,
+                'celsius' => $location1MetricResponse['current']['temp'],
+                'fahrenheit' => $location1ImperialResponse['current']['temp'],
+            ]);
+            $temperature = Temperature::create([
+                'timestamp' => now(),
+                'location' => 2,
+                'celsius' => $location2MetricResponse['current']['temp'],
+                'fahrenheit' => $location2ImperialResponse['current']['temp'],
             ]);
         } else {
-            if ($temperature->celsius_1 != (float)round($location1MetricResponse['current']['temp'],2)) {
+            $temperature = Temperature::whereBetween('timestamp',[now()->startOfDay(), now()->endOfDay()])->where('location',1)->first();
+            if ($temperature->celsius != (float)round($location1MetricResponse['current']['temp'],2)) {
                 $temperature->update([
                     'timestamp' => now(),
-                    'celsius_1' => $location1MetricResponse['current']['temp'],
-                    'fahrenheit_1' => $location1ImperialResponse['current']['temp'],
+                    'celsius' => $location1MetricResponse['current']['temp'],
+                    'fahrenheit' => $location1ImperialResponse['current']['temp'],
                 ]);
             }
+            $temperature = Temperature::whereBetween('timestamp',[now()->startOfDay(), now()->endOfDay()])->where('location',2)->first();
             if ($temperature->celsius_2 != (float)round($location2MetricResponse['current']['temp'],2)) {
                 $temperature->update([
                     'timestamp' => now(),
-                    'celsius_1' => $location2MetricResponse['current']['temp'],
-                    'fahrenheit_1' => $location2ImperialResponse['current']['temp'],
+                    'celsius' => $location2MetricResponse['current']['temp'],
+                    'fahrenheit' => $location2ImperialResponse['current']['temp'],
                 ]);
             }
         }

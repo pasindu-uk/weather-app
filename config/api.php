@@ -17,11 +17,13 @@ return [
     'locations' => [
 
         'location_1' => [
+            'name' => 'Colombo',
             'lat' => 6.9271,
             'lon' => 79.8612,
         ],
 
         'location_2' => [
+            'name' => 'Melbourne',
             'lat' => 37.8136,
             'lon' => 144.9631,
         ],
