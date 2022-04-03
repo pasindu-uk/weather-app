@@ -17,8 +17,10 @@ class CreateTemperaturesTable extends Migration
             $table->id();
 
             $table->timestamp('timestamp');
-            $table->float('celsius');
-            $table->float('fahrenheit');
+            $table->float('celsius_1');
+            $table->float('fahrenheit_1');
+            $table->float('celsius_2');
+            $table->float('fahrenheit_2');
 
             $table->timestamps();
         });

@@ -18,8 +18,10 @@ class Temperature extends Model
      */
     protected $fillable = [
         'timestamp',
-        'celsius',
-        'fahrenheit',
+        'celsius_1',
+        'fahrenheit_1',
+        'celsius_2',
+        'fahrenheit_2',
     ];
 
     /**
