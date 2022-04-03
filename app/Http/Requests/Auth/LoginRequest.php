@@ -46,12 +46,12 @@ class LoginRequest extends FormRequest
     public function authenticate()
     {
         //API triggering for location 1
-        $location1MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=metric&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
-        $location1ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=imperial&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+        $location1MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=metric&appid='.env('OPEN_WEATHER_KEY'));
+        $location1ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=imperial&appid='.env('OPEN_WEATHER_KEY'));
 
         //API triggering for location 2
-        $location2MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=metric&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
-        $location2ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=imperial&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+        $location2MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=metric&appid='.env('OPEN_WEATHER_KEY'));
+        $location2ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=imperial&appid='.env('OPEN_WEATHER_KEY'));
 
         $temperature = Temperature::whereBetween('timestamp',[now()->startOfDay(), now()->endOfDay()])->first();
 
