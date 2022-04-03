@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
+use App\Models\Temperature;
 
 class LoginRequest extends FormRequest
 {
@@ -43,6 +45,40 @@ class LoginRequest extends FormRequest
      */
     public function authenticate()
     {
+        //API triggering for location 1
+        $location1MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=metric&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+        $location1ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_1.lat').'&lon='.config('api.locations.location_1.lon').'&exclude=hourly,daily,minutely&units=imperial&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+
+        //API triggering for location 2
+        $location2MetricResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=metric&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+        $location2ImperialResponse = Http::get('https://api.openweathermap.org/data/2.5/onecall?lat='.config('api.locations.location_2.lat').'&lon='.config('api.locations.location_2.lon').'&exclude=hourly,daily,minutely&units=imperial&appid=8dc9ba99c4e5fe28f4dc20edbc1848c0');
+
+        $temperature = Temperature::whereBetween('timestamp',[now()->startOfDay(), now()->endOfDay()])->first();
+
+        if ($temperature == null) {
+            $temperature = Temperature::create([
+                'timestamp' => now(),
+                'celsius_1' => $location1MetricResponse['current']['temp'],
+                'fahrenheit_1' => $location1ImperialResponse['current']['temp'],
+                'celsius_2' => $location2MetricResponse['current']['temp'],
+                'fahrenheit_2' => $location2ImperialResponse['current']['temp'],
+            ]);
+        } else {
+            if ($temperature->celsius_1 != (float)round($location1MetricResponse['current']['temp'],2)) {
+                $temperature->update([
+                    'timestamp' => now(),
+                    'celsius_1' => $location1MetricResponse['current']['temp'],
+                    'fahrenheit_1' => $location1ImperialResponse['current']['temp'],
+                ]);
+            }
+            if ($temperature->celsius_2 != (float)round($location2MetricResponse['current']['temp'],2)) {
+                $temperature->update([
+                    'timestamp' => now(),
+                    'celsius_1' => $location2MetricResponse['current']['temp'],
+                    'fahrenheit_1' => $location2ImperialResponse['current']['temp'],
+                ]);
+            }
+        }
         $this->ensureIsNotRateLimited();
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
